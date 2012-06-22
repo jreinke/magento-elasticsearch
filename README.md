@@ -3,6 +3,8 @@
 **This module has not been tested under real production environment conditions.**  
 **Any bug report is welcomed.**
 
+![Magento Elasticsearch](http://i.imgur.com/X6quR.png)
+
 ## Installation
 
 ### Magento CE 1.7+ only
