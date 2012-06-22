@@ -1,6 +1,6 @@
-# Enhance your Magento store search results using Elasticsearch
+## Enhance your Magento store search results using Elasticsearch
 
-**This module has not been tested under real production environment conditions.**
+**This module has not been tested under real production environment conditions.**  
 **Any bug report is welcomed.**
 
 ## Installation
