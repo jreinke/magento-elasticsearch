@@ -117,12 +117,21 @@ class JR_Search_Model_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Model_
         $data = $layer->getAggregator()->getCacheData($key);
 
         if ($data === null) {
-            /** @var $productCollection JR_Search_Model_Resource_Catalog_Product_Collection */
-            $options = $attribute->getFrontend()->getSelectOptions();
             $facets = $this->_getFacets();
-
             $data = array();
             if (array_sum($facets) > 0) {
+                if ($attribute->getFrontendInput() != 'text') {
+                    $options = $attribute->getFrontend()->getSelectOptions();
+                } else {
+                    $options = array();
+                    foreach ($facets as $label => $count) {
+                        $options[] = array(
+                            'label' => $label,
+                            'value' => $label,
+                            'count' => $count,
+                        );
+                    }
+                }
                 foreach ($options as $option) {
                     if (is_array($option['value']) || !Mage::helper('core/string')->strlen($option['value'])) {
                         continue;
@@ -152,6 +161,21 @@ class JR_Search_Model_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Model_
         }
 
         return $data;
+    }
+
+    /**
+     * Returns option label if attribute uses options.
+     *
+     * @param int $optionId
+     * @return bool|int|string
+     */
+    protected function _getOptionText($optionId)
+    {
+        if ($this->getAttributeModel()->getFrontendInput() == 'text') {
+            return $optionId; // not an option id
+        }
+
+        return parent::_getOptionText($optionId);
     }
 
     /**

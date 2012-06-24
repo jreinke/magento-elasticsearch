@@ -292,10 +292,10 @@ class JR_Search_Model_Resource_Engine_Elasticsearch_Client extends Elastica_Clie
                     $properties = $this->_getIndexProperties();
                     foreach ($params['facets']['fields'] as $field) {
                         if (array_key_exists($field, $properties)) {
+                            $facet = new Elastica_Facet_Terms($field);
                             if ($properties[$field]['type'] == 'multi_field') {
                                 $field .= '.untouched';
                             }
-                            $facet = new Elastica_Facet_Terms($field);
                             $facet->setField($field);
                             $facet->setParam('all_terms', true);
                             $facet->setSize($this->getFacetsMaxSize());
