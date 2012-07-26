@@ -406,12 +406,13 @@ class JR_Search_Model_Resource_Engine_Elasticsearch_Client extends Elastica_Clie
                             'type' => $type,
                         );
                     } else {
+                        $weight = $attribute->getSearchWeight();
                         $properties[$key] = array(
                             'type' => 'multi_field',
                             'fields' => array(
                                 $key => array(
                                     'type' => $type,
-                                    'boost' => $attribute->getSearchWeight(),
+                                    'boost' => $weight > 0 ? $weight : 1,
                                 ),
                                 'untouched' => array(
                                     'type' => $type,
@@ -438,9 +439,10 @@ class JR_Search_Model_Resource_Engine_Elasticsearch_Client extends Elastica_Clie
                 $languageCode = $helper->getLanguageCodeByStore($store);
                 $locale = $helper->getLocaleCode($store);
                 $key = $helper->getAttributeFieldName($attribute, $locale);
+                $weight = $attribute->getSearchWeight();
                 $properties[$key] = array(
                     'type' => 'string',
-                    'boost' => $attribute->getSearchWeight(),
+                    'boost' => $weight > 0 ? $weight : 1,
                     'analyzer' => 'analyzer_' . $languageCode,
                 );
             }
@@ -451,9 +453,10 @@ class JR_Search_Model_Resource_Engine_Elasticsearch_Client extends Elastica_Clie
             /** @var $attribute Mage_Catalog_Model_Resource_Eav_Attribute */
             $key = $helper->getAttributeFieldName($attribute);
             if ($this->_isAttributeIndexable($attribute) && !isset($properties[$key])) {
+                $weight = $attribute->getSearchWeight();
                 $properties[$key] = array(
                     'type' => $this->_getAttributeType($attribute),
-                    'boost' => $attribute->getSearchWeight(),
+                    'boost' => $weight > 0 ? $weight : 1,
                 );
                 if ($attribute->getBackendType() == 'datetime') {
                     $properties[$key]['format'] = $this->_dateFormat;
