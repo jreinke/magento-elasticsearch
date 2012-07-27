@@ -7,12 +7,12 @@ php:
   - 5.3
 
 before_script:
+  - sudo service elasticsearch start
   - wget -O modgit https://raw.github.com/jreinke/modgit/master/modgit
   - chmod +x modgit
   - sudo mv modgit /usr/local/bin
   - modgit init
-  - sudo service elasticsearch start
-  - git clone https://github.com/LokeyCoding/magento-mirror.git -b magento-1.7 .
+  - modgit clone magento https://github.com/LokeyCoding/magento-mirror.git -b magento-1.7
   - wget -O magento-sample-data-1.6.1.0.zip http://www.magentocommerce.com/downloads/assets/1.6.1.0/magento-sample-data-1.6.1.0.zip
   - unzip -q magento-sample-data-1.6.1.0.zip
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `magento_travis`;'
