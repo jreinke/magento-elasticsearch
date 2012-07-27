@@ -1,5 +1,7 @@
 ## Enhance your Magento store search results using Elasticsearch
 
+[![Build Status](https://secure.travis-ci.org/jreinke/magento-elasticsearch.png?branch=master)](http://travis-ci.org/jreinke/magento-elasticsearch)
+
 **This module has not been tested under real production environment conditions.**  
 **Any bug report is welcomed.**
 
