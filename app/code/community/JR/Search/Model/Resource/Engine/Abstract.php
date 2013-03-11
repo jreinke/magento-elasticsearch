@@ -216,7 +216,7 @@ abstract class JR_Search_Model_Resource_Engine_Abstract
      */
     public function isLeyeredNavigationAllowed()
     {
-        $this->isLayeredNavigationAllowed();
+        return $this->isLayeredNavigationAllowed();
     }
 
     /**
