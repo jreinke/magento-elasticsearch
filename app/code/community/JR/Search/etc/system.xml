@@ -101,7 +101,7 @@ For example, in a N shards with 2 replicas index, there will have to be at least
                             <label>Enable ICU Folding Token Filter</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <comment>Needs ICU plugin installation: https://github.com/search/search-analysis-icu</comment>
+                            <comment>Needs ICU plugin installation: https://github.com/elasticsearch/elasticsearch-analysis-icu</comment>
                             <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
