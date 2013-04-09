@@ -424,6 +424,7 @@ class JR_Search_Model_Resource_Engine_Elasticsearch_Client extends Elastica_Clie
                             $properties[$key]['fields'][$analyzer] = array(
                                 'type' => 'string',
                                 'analyzer' => $analyzer,
+                                'boost' => $attribute->getSearchWeight(),
                             );
                         }
                     }
