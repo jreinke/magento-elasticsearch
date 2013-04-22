@@ -231,6 +231,7 @@ class JR_Search_Model_Resource_Engine_Elasticsearch_Client extends Elastica_Clie
     public function search($q, $params = array(), $type = 'product')
     {
         if ($this->getStatus()->indexExists($this->_index)) {
+            Varien_Profiler::start('ELASTICA_SEARCH');
             if (empty($params['filters'])) {
                 $params['filters'] = '*';
             }
@@ -323,6 +324,8 @@ class JR_Search_Model_Resource_Engine_Elasticsearch_Client extends Elastica_Clie
             $result = $this->getIndex($this->_index)
                 ->getType($type)
                 ->search($query);
+
+            Varien_Profiler::stop('ELASTICA_SEARCH');
 
             return $result;
         }

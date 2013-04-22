@@ -252,9 +252,10 @@ abstract class JR_Search_Model_Resource_Engine_Abstract
      */
     public function search($query, $params = array(), $type = 'product')
     {
-        Varien_Profiler::start('JR_SEARCH');
         try {
+            Varien_Profiler::start('JR_SEARCH');
             $result = $this->_search($query, $params, $type);
+            Varien_Profiler::stop('JR_SEARCH');
 
             return $result;
         } catch (Exception $e) {
@@ -263,7 +264,6 @@ abstract class JR_Search_Model_Resource_Engine_Abstract
                 $this->_getHelper()->showError($e->getMessage());
             }
         }
-        Varien_Profiler::stop('JR_SEARCH');
 
         return array();
     }
