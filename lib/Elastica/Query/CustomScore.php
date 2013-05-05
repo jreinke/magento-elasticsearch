@@ -1,46 +1,74 @@
 <?php
 
+namespace Elastica\Query;
+
+use Elastica\Query as BaseQuery;
+use Elastica\Script;
+
 /**
  * Custom score query
  *
- * @uses Elastica_Query_Abstract
  * @category Xodoa
  * @package Elastica
  * @author Wu Yang <darkyoung@gmail.com>
  * @link http://www.elasticsearch.org/guide/reference/query-dsl/custom-score-query.html
  */
-class Elastica_Query_CustomScore extends Elastica_Query_Abstract {
-	/**
-	 * Sets query object
-	 *
-	 * @param string|Elastica_Query|Elastica_Query_Abstract $query
-	 * @return Elastica_Query_CustomScore
-	 */
-	public function setQuery($query) {
-		$query = Elastica_Query::create($query);
-		$data = $query->toArray();
-		return $this->setParam('query', $data['query']);
-	}
+class CustomScore extends AbstractQuery
+{
+    /**
+     * Constructor
+     *
+     * @param string|array|\Elastica\Script        $script
+     * @param string|\Elastica\Query\AbstractQuery $query
+     */
+    public function __construct($script = null, $query= null)
+    {
+        if ($script) {
+            $this->setScript($script);
+        }
+        $this->setQuery($query);
+    }
 
-	/**
-	 * Set script
-	 * 
-	 * @param string $script
-	 * @return Elastica_Query_CustomScore
-	 */
-	public function setScript($script) {
-		return $this->setParam('script', $script);
-	}
+    /**
+     * Sets query object
+     *
+     * @param  string|\Elastica\Query|\Elastica\Query\AbstractQuery $query
+     * @return \Elastica\Query\CustomScore
+     */
+    public function setQuery($query)
+    {
+        $query = BaseQuery::create($query);
+        $data = $query->toArray();
 
-	/**
-	 * Add params
-	 *
-	 * @param array $params
-	 * @return Elastica_Query_CustomScore
-	 */
-	public function addParams(array $params) {
-		$this->setParam('params', $params);
-		return $this;
-	}
+        return $this->setParam('query', $data['query']);
+    }
+
+    /**
+     * Set script
+     *
+     * @param  string|\Elastica\Script          $script
+     * @return \Elastica\Query\CustomScore
+     */
+    public function setScript($script)
+    {
+        $script = Script::create($script);
+        foreach ($script->toArray() as $param => $value) {
+            $this->setParam($param, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add params
+     *
+     * @param  array                           $params
+     * @return \Elastica\Query\CustomScore
+     */
+    public function addParams(array $params)
+    {
+        $this->setParam('params', $params);
+
+        return $this;
+    }
 }
-
