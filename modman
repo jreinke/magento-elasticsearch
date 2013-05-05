@@ -1,0 +1,3 @@
+app/code/community/JR/Search app/code/community/JR/Search
+app/etc/modules/JR_Search.xml app/etc/modules/JR_Search.xml
+lib/Elastica lib/Elastica
