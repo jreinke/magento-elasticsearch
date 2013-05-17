@@ -75,6 +75,17 @@ class JR_Search_Model_Resource_Catalog_Product_Collection extends Mage_Catalog_M
     }
 
     /**
+     * Add some fields to filter.
+     *
+     * @param $fields
+     * @return JR_Search_Model_Resource_Catalog_Product_Collection
+     */
+    public function addFieldsToFilter($fields)
+    {
+        return $this;
+    }
+
+    /**
      * Stores filter query.
      *
      * @param array $params
