@@ -109,6 +109,16 @@ abstract class JR_Search_Model_Resource_Engine_Abstract
     }
 
     /**
+     * Returns advanced search results.
+     *
+     * @return JR_Search_Model_Resource_Catalog_Product_Collection
+     */
+    public function getAdvancedResultCollection()
+    {
+        return $this->getResultCollection();
+    }
+
+    /**
      * Checks if advanced index is allowed for current search engine.
      *
      * @return bool
@@ -174,6 +184,16 @@ abstract class JR_Search_Model_Resource_Engine_Abstract
         );
 
         return $result;
+    }
+
+    /**
+     * Returns resource name.
+     *
+     * @return string
+     */
+    public function getResourceName()
+    {
+        return 'jr_search/advanced';
     }
 
     /**
