@@ -1,4 +1,12 @@
 <?php
+
+namespace Elastica\Transport;
+
+use Elastica\Exception\Connection\HttpException;
+use Elastica\Exception\ResponseException;
+use Elastica\Request;
+use Elastica\Response;
+
 /**
  * Elastica Http Transport object
  *
@@ -6,141 +14,158 @@
  * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
  */
-class Elastica_Transport_Http extends Elastica_Transport_Abstract {
+class Http extends AbstractTransport
+{
+    /**
+     * Http scheme
+     *
+     * @var string Http scheme
+     */
+    protected $_scheme = 'http';
 
-	/**
-	 * Http scheme
-	 * 
-	 * @var string Http scheme
-	 */
-	protected $_scheme = 'http';
+    /**
+     * Curl resource to reuse
+     *
+     * @var resource Curl resource to reuse
+     */
+    protected static $_curlConnection = null;
 
-	/**
-	 * Curl resource to reuse
-	 * 
-	 * @var resource Curl resource to reuse
-	 */
-	protected static $_connection = null;
+    /**
+     * Makes calls to the elasticsearch server
+     *
+     * All calls that are made to the server are done through this function
+     *
+     * @param  \Elastica\Request                     $request
+     * @param  array                                $params  Host, Port, ...
+     * @throws \Elastica\Exception\ConnectionException
+     * @throws \Elastica\Exception\ResponseException
+     * @throws \Elastica\Exception\Connection\HttpException
+     * @return \Elastica\Response                    Response object
+     */
+    public function exec(Request $request, array $params)
+    {
+        $connection = $this->getConnection();
 
-	/**
-	 * Makes calls to the elasticsearch server
-	 *
-	 * All calls that are made to the server are done through this function
-	 *
-	 * @param array $params Host, Port, ...
-	 * @return Elastica_Response Response object
-	 */
-	public function exec(array $params) {
+        $conn = $this->_getConnection($connection->isPersistent());
 
-		$request = $this->getRequest();
+        // If url is set, url is taken. Otherwise port, host and path
+        $url = $connection->hasConfig('url')?$connection->getConfig('url'):'';
 
-		$conn = $this->_getConnection($request->getConfig('persistent'));
+        if (!empty($url)) {
+            $baseUri = $url;
+        } else {
+            $baseUri = $this->_scheme . '://' . $connection->getHost() . ':' . $connection->getPort() . '/' . $connection->getPath();
+        }
 
-		// If url is set, url is taken. Otherwise port, host and path
-		if (!empty($params['url'])) {
-			$baseUri = $params['url'];
-		} else {
-			if (!isset($params['host']) || !isset($params['port'])) {
-				throw new Elastica_Exception_Invalid('host and port have to be set');
-			}
+        $baseUri .= $request->getPath();
 
-			$path = isset($params['path']) ? $params['path'] : '';
+        $query = $request->getQuery();
 
-			$baseUri = $this->_scheme . '://' . $params['host'] . ':' . $params['port'] . '/' . $path;
-		}
+        if (!empty($query)) {
+            $baseUri .= '?' . http_build_query($query);
+        }
 
-		$baseUri .= $request->getPath();
+        curl_setopt($conn, CURLOPT_URL, $baseUri);
+        curl_setopt($conn, CURLOPT_TIMEOUT, $connection->getTimeout());
+        curl_setopt($conn, CURLOPT_FORBID_REUSE, 0);
 
-		$query = $request->getQuery();
+        $this->_setupCurl($conn);
 
-		if (!empty($query)) {
-			$baseUri .= '?' . http_build_query($query);
-		}
+        $headersConfig = $connection->hasConfig('headers')?$connection->getConfig('headers'):array();
 
-		curl_setopt($conn, CURLOPT_URL, $baseUri);
-		curl_setopt($conn, CURLOPT_TIMEOUT, $request->getConfig('timeout'));
-		curl_setopt($conn, CURLOPT_CUSTOMREQUEST, $request->getMethod());
-		curl_setopt($conn, CURLOPT_FORBID_REUSE, 0);
+        if (!empty($headersConfig)) {
+            $headers = array();
+            while (list($header, $headerValue) = each($headersConfig)) {
+                array_push($headers, $header . ': ' . $headerValue);
+            }
 
-		$this->_setupCurl($conn);
+            curl_setopt($conn, CURLOPT_HTTPHEADER, $headers);
+        }
 
-		$headersConfig = $request->getConfig('headers');
-		if (!empty($headersConfig)) {
-			$headers = array();
-			while (list($header, $headerValue) = each($headersConfig)) {
-				array_push($headers, $header . ': ' . $headerValue);
-			}
+        // TODO: REFACTOR
+        $data = $request->getData();
+        $httpMethod = $request->getMethod();
 
-			curl_setopt($conn, CURLOPT_HTTPHEADER, $headers);
-		}
+        if (isset($data) && !empty($data)) {
+            if ($this->hasParam('postWithRequestBody') && $this->getParam('postWithRequestBody') == true) {
+                $httpMethod = Request::POST;
+            }
 
-		// TODO: REFACTOR
-		$data = $request->getData();
+            if (is_array($data)) {
+                $content = json_encode($data);
+            } else {
+                $content = $data;
+            }
 
-		if (isset($data) && !empty($data)) {
-			if (is_array($data)) {
-				$content = json_encode($data);
-			} else {
-				$content = $data;
-			}
+            // Escaping of / not necessary. Causes problems in base64 encoding of files
+            $content = str_replace('\/', '/', $content);
 
-			// Escaping of / not necessary. Causes problems in base64 encoding of files
-			$content = str_replace('\/', '/', $content);
+            curl_setopt($conn, CURLOPT_POSTFIELDS, $content);
+        }
 
-			curl_setopt($conn, CURLOPT_POSTFIELDS, $content);
-		}
+        curl_setopt($conn, CURLOPT_CUSTOMREQUEST, $httpMethod);
 
-		$start = microtime(true);
-		
-		// cURL opt returntransfer leaks memory, therefore OB instead.
-		ob_start();
-		curl_exec($conn);
-		$responseString = ob_get_clean();
-		
-		$end = microtime(true);
+        if (defined('DEBUG') && DEBUG) {
+            // Track request headers when in debug mode
+            curl_setopt($conn, CURLINFO_HEADER_OUT, true);
+        }
 
-		// Checks if error exists
-		$errorNumber = curl_errno($conn);
+        $start = microtime(true);
 
-		$response = new Elastica_Response($responseString);
+        // cURL opt returntransfer leaks memory, therefore OB instead.
+        ob_start();
+        curl_exec($conn);
+        $responseString = ob_get_clean();
 
-		if (defined('DEBUG') && DEBUG) {
-			$response->setQueryTime($end - $start);
-			$response->setTransferInfo(curl_getinfo($conn));
-		}
+        $end = microtime(true);
 
-		if ($response->hasError()) {
-			throw new Elastica_Exception_Response($response);
-		}
+        // Checks if error exists
+        $errorNumber = curl_errno($conn);
 
-		if ($errorNumber > 0) {
-			throw new Elastica_Exception_Client($errorNumber, $request, $response);
-		}
-		
-		return $response;
-	}
+        $response = new Response($responseString);
 
-	/**
-	 * Called to add additional curl params
-	 *
-	 * @param resource $connection Curl connection
-	 */
-	protected function _setupCurl($connection) {
-		foreach ($this->_request->getClient()->getConfig('curl') as $key => $param) {
-			curl_setopt($connection, $key, $param);
-		}
-	}
+        if (defined('DEBUG') && DEBUG) {
+            $response->setQueryTime($end - $start);
+            $response->setTransferInfo(curl_getinfo($conn));
+        }
 
-	/**
-	 * Return Curl ressource
-	 * 
-	 * @param bool $persistent False if not persistent connection
-	 * @return resource Connection resource
-	 */
-	protected function _getConnection($persistent = true) {
-		if (!$persistent || !self::$_connection){
-			self::$_connection = curl_init();
-		}
-		return self::$_connection;
-	}
+        if ($response->hasError()) {
+            throw new ResponseException($request, $response);
+        }
+
+        if ($errorNumber > 0) {
+            throw new HttpException($errorNumber, $request, $response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Called to add additional curl params
+     *
+     * @param resource $curlConnection Curl connection
+     */
+    protected function _setupCurl($curlConnection)
+    {
+        if ($this->getConnection()->hasConfig('curl')) {
+            foreach ($this->getConnection()->getConfig('curl') as $key => $param) {
+                curl_setopt($curlConnection, $key, $param);
+            }
+        }
+    }
+
+    /**
+     * Return Curl resource
+     *
+     * @param  bool     $persistent False if not persistent connection
+     * @return resource Connection resource
+     */
+    protected function _getConnection($persistent = true)
+    {
+        if (!$persistent || !self::$_curlConnection) {
+            self::$_curlConnection = curl_init();
+        }
+
+        return self::$_curlConnection;
+    }
 }

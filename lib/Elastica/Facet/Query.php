@@ -1,9 +1,27 @@
 <?php
 
-class Elastica_Facet_Query extends Elastica_Facet_Abstract
+namespace Elastica\Facet;
+
+use Elastica\Query\AbstractQuery;
+
+/**
+ * Query facet
+ *
+ * @category Xodoa
+ * @package Elastica
+ * @author Nicolas Ruflin <spam@ruflin.com>
+ * @link http://www.elasticsearch.org/guide/reference/api/search/facets/query-facet.html
+ */
+class Query extends AbstractFacet
 {
-	public function toArray() {
-		$this->_setFacetParam('query', $this->_params);
-		return parent::toArray();
-	}
+    /**
+     * Set the query for the facet.
+     *
+     * @param  \Elastica\Query\AbstractQuery $query
+     * @return \Elastica\Facet\Query
+     */
+    public function setQuery(AbstractQuery $query)
+    {
+        return $this->_setFacetParam('query', $query->toArray());
+    }
 }

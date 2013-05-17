@@ -1,4 +1,7 @@
 <?php
+
+namespace Elastica\Filter;
+
 /**
  * Geo distance filter
  *
@@ -7,100 +10,64 @@
  * @author Nicolas Ruflin <spam@ruflin.com>
  * @link http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-filter.html
  */
-class Elastica_Filter_GeoDistance extends Elastica_Filter_Abstract {
-	/**
-	 * Key
-	 * 
-	 * @var string Key
-	 */
-	protected $_key = '';
+class GeoDistance extends AbstractGeoDistance
+{
+    const DISTANCE_TYPE_ARC = 'arc';
+    const DISTANCE_TYPE_PLANE = 'plane';
 
-	/**
-	 * Distance
-	 * 
-	 * @var string Distance
-	 */
-	protected $_distance = '';
+    const OPTIMIZE_BBOX_MEMORY = 'memory';
+    const OPTIMIZE_BBOX_INDEXED = 'indexed';
+    const OPTIMIZE_BBOX_NONE = 'none';
 
-	/**
-	 * Latitude
-	 * 
-	 * @var string Latitude
-	 */
-	protected $_latitude = '';
+    /**
+     * Create GeoDistance object
+     *
+     * @param  string                              $key      Key
+     * @param  array|string                        $location Location as array or geohash: array('lat' => 48.86, 'lon' => 2.35) OR 'drm3btev3e86'
+     * @param  string                              $distance Distance
+     * @throws \Elastica\Exception\InvalidException
+     */
+    public function __construct($key, $location, $distance)
+    {
+        parent::__construct($key, $location);
 
-	/**
-	 * Longitude
-	 * 
-	 * @var string Longitude
-	 */
-	protected $_longitude = '';
+        $this->setDistance($distance);
+    }
 
-	/**
-	 * Create GeoDistance object
-	 *
-	 * @param string $key Key
-	 * @param string $latitude Latitude
-	 * @param string $longitude Longitude
-	 * @param string $distance Distance
-	 */
-	public function __construct($key, $latitude, $longitude, $distance) {
-		$this->_key = $key;
-		$this->setLatitude($latitude);
-		$this->setLongitude($longitude);
-		$this->setDistance($distance);
-	}
+    /**
+     * @param  string                            $distance
+     * @return \Elastica\Filter\GeoDistance current filter
+     */
+    public function setDistance($distance)
+    {
+        $this->setParam('distance', $distance);
 
-	/**
-	 * Sets the distance to search for
-	 *
-	 * @param string $distance Distance
-	 * @return Elastica_Filter_GeoDistance Current object
-	 */
-	public function setDistance($distance) {
-		// TODO: validate distance?
-		$this->_distance = $distance;
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Sets the laititude
-	 *
-	 * @param string $latitude Latitude
-	 * @return Elastica_Filter_GeoDistance Current object
-	 */
-	public function setLatitude($latitude) {
-		$this->_latitude = $latitude;
-		return $this;
-	}
+    /**
+     * See DISTANCE_TYPE_* constants
+     *
+     * @param  string                            $distanceType
+     * @return \Elastica\Filter\GeoDistance current filter
+     */
+    public function setDistanceType($distanceType)
+    {
+        $this->setParam('distance_type', $distanceType);
 
+        return $this;
+    }
 
-	/**
-	 * Sets the longitude
-	 *
-	 * @param string $longitude Longitude
-	 * @return Elastica_Filter_GeoDistance Current object
-	 */
-	public function setLongitude($longitude) {
-		$this->_longitude = $longitude;
-		return $this;
-	}
+    /**
+     * See OPTIMIZE_BBOX_* constants
+     *
+     * @param  string                            $optimizeBbox
+     * @return \Elastica\Filter\GeoDistance current filter
+     */
+    public function setOptimizeBbox($optimizeBbox)
+    {
+        $this->setParam('optimize_bbox', $optimizeBbox);
 
-	/**
-	 * Convers filter o array
-	 *
-	 * @see Elastica_Filter_Abstract::toArray()
-	 * @return Elastica_Filter_GeoDistance Current object
-	 */
-	public function toArray() {
-		return array(
-			'geo_distance' => array(
-				'distance' => $this->_distance,
-				$this->_key => array(
-					'lat' => $this->_latitude,
-					'lon' => $this->_longitude
-				),
-			),
-		);
-	}
+        return $this;
+    }
 }
