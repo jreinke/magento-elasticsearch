@@ -349,6 +349,8 @@ class JR_Search_Helper_Data extends Mage_Core_Helper_Abstract
             'fr' => array('fr_CA', 'fr_FR'),
             // German
             'de' => array('de_DE','de_DE','de_AT'),
+            // Hungarian
+            'hu' => 'hu_HU',
             // Italian
             'it' => array('it_IT','it_CH'),
             // Norwegian
