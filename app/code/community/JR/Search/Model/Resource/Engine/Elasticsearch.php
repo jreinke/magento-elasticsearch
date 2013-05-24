@@ -103,6 +103,10 @@ class JR_Search_Model_Resource_Engine_Elasticsearch extends JR_Search_Model_Reso
                             $date = $this->_getDate($store->getId(), $date);
                         }
                         unset($date);
+                    } elseif ($attribute->usesSource() &&
+                        $attribute->getFrontendInput() == 'multiselect' &&
+                        !empty($value)) {
+                        $value = explode(',', is_array($value) ? $value[0] : $value);
                     }
                 }
                 if (array_key_exists($key, $sortables)) {

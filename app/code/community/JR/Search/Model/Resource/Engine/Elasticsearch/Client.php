@@ -355,7 +355,9 @@ class JR_Search_Model_Resource_Engine_Elasticsearch_Client extends Elastica_Clie
     protected function _getAttributeType($attribute)
     {
         $type = 'string';
-        if ($attribute->getBackendType() == 'decimal') {
+        if ($attribute->getFrontendInput() == 'multiselect') {
+            $type = 'string';
+        } elseif ($attribute->getBackendType() == 'decimal') {
             $type = 'double';
         } elseif ($attribute->getSourceModel() == 'eav/entity_attribute_source_boolean') {
             $type = 'boolean';
