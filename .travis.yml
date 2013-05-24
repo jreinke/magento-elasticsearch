@@ -12,7 +12,7 @@ before_script:
   - chmod +x modgit
   - sudo mv modgit /usr/local/bin
   - modgit init
-  - modgit clone magento -t 1.7.0.2 https://github.com/jreinke/magento-mirror.git
+  - modgit clone -t 1.7.0.2 magento https://github.com/jreinke/magento-mirror.git
   - wget -O magento-sample-data-1.6.1.0.zip http://www.magentocommerce.com/downloads/assets/1.6.1.0/magento-sample-data-1.6.1.0.zip
   - unzip -q magento-sample-data-1.6.1.0.zip
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `magento_travis`;'
