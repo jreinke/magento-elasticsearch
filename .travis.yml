@@ -18,7 +18,7 @@ before_script:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `magento_travis`;'
   - mysql -uroot magento_travis < magento-sample-data-1.6.1.0/magento_sample_data_for_1.6.1.0.sql
   - php -f install.php -- --license_agreement_accepted yes --locale en_GB --timezone Europe/Paris --default_currency EUR --db_host localhost --db_name magento_travis --db_user root --db_pass "" --url http://travis.magento.local/ --skip_url_validation yes --use_rewrites yes --use_secure no --secure_base_url --use_secure_admin no --admin_firstname Johann --admin_lastname Reinke --admin_email admin@example.com --admin_username admin --admin_password magento123
-  - mysql -D magento_travis -e "INSERT INTO core_config_data (scope, scope_id, path, value) VALUES('default', 0, 'catalog/search/engine', 'jr_search/engine_elasticsearch');"
+  - mysql -D magento_travis -e "INSERT INTO core_config_data (scope, scope_id, path, value) VALUES('default', 0, 'catalog/search/engine', 'bubble_search/engine_elasticsearch');"
   - rm -rf var/cache/*
 
 script:

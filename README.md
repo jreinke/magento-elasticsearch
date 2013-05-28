@@ -2,9 +2,6 @@
 
 [![Build Status](https://secure.travis-ci.org/jreinke/magento-elasticsearch.png?branch=master)](http://travis-ci.org/jreinke/magento-elasticsearch)
 
-**This module has not been tested under real production environment conditions.**  
-**Any bug report is welcomed.**
-
 ![Magento Elasticsearch](http://i.imgur.com/X6quR.png)
 
 ## Installation
@@ -15,11 +12,11 @@ Install with [modgit](https://github.com/jreinke/modgit):
 
     $ cd /path/to/magento
     $ modgit init
-    $ modgit -e README.md clone elasticsearch https://github.com/jreinke/magento-elasticsearch.git
+    $ modgit clone elasticsearch https://github.com/jreinke/magento-elasticsearch.git
 
 or download package manually:
 
-* Download latest version [here](https://github.com/jreinke/magento-elasticsearch/downloads)
+* Download latest version [here](https://github.com/jreinke/magento-elasticsearch/archive/master.zip)
 * Unzip in Magento root folder
 * Clean cache
 
