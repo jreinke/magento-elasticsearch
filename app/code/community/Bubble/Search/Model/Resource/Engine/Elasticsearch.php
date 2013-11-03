@@ -583,6 +583,7 @@ class Bubble_Search_Model_Resource_Engine_Elasticsearch extends Bubble_Search_Mo
 
         if (!empty($params['stats'])) {
             $searchParams['stats'] = $params['stats'];
+            $useFacetSearch = true;
         }
 
         $data = $this->_client->search($searchConditions, $searchParams, $type);
