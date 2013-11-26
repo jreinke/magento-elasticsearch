@@ -12,21 +12,21 @@
 class Elastica_ResultSet implements Iterator, Countable {
 	/**
 	 * Results
-	 * 
+	 *
 	 * @var array Results
 	 */
 	protected $_results = array();
 
 	/**
 	 * Current position
-	 * 
+	 *
 	 * @var int Current position
 	 */
 	protected $_position = 0;
 
 	/**
 	 * Response
-	 * 
+	 *
 	 * @var Elastica_Response Response object
 	 */
 	protected $_response = null;
@@ -49,9 +49,10 @@ class Elastica_ResultSet implements Iterator, Countable {
 	protected function _init(Elastica_Response $response) {
 		$this->_response = $response;
 		$result = $response->getData();
-		$this->_totalHits = $result['hits']['total'];
+		$this->_totalHits = 0;
 		$this->_took = isset($result['took']) ? $result['took'] : 0;
 		if (isset($result['hits']['hits'])) {
+			$this->_totalHits = $result['hits']['total'];
 			foreach ($result['hits']['hits'] as $hit) {
 				$this->_results[] = new Elastica_Result($hit);
 			}
