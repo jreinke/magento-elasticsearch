@@ -16,6 +16,12 @@ Install with [modgit](https://github.com/jreinke/modgit):
     $ modgit init
     $ modgit clone elasticsearch https://github.com/jreinke/magento-elasticsearch.git
 
+Install with [modman](https://github.com/colinmollenhour/modman):
+
+    $ cd /path/to/magento
+    $ modman init
+    $ modman clone https://github.com/jreinke/magento-elasticsearch.git
+
 or download package manually:
 
 * Download latest version [here](https://github.com/jreinke/magento-elasticsearch/archive/master.zip)
