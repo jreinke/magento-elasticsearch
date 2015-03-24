@@ -1,6 +1,6 @@
 ## Magento extension for boosting search results using Elasticsearch (0.20.x only)
 
-For the latest version of Elasticsearch (0.90.x based on Lucene 4), there is a paid extension available [here](http://shop.bubblecode.net/magento-elasticsearch.html)
+For the latest version of Elasticsearch (0.90.x based on Lucene 4), there is a paid extension available [here](https://www.bubbleshop.net/magento-elasticsearch.html)
 
 [![Build Status](https://secure.travis-ci.org/jreinke/magento-elasticsearch.png?branch=master)](http://travis-ci.org/jreinke/magento-elasticsearch)
 
