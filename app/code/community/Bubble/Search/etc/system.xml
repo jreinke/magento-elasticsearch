@@ -19,7 +19,7 @@
                             <label>Enable Debug Mode</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <comment>If set yo yes, will display potential error messages in frontend.</comment>
+                            <comment>If set to yes, will display potential error messages in frontend.</comment>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
