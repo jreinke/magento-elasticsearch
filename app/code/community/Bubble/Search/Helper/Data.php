@@ -387,6 +387,22 @@ class Bubble_Search_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $default;
     }
+    
+    /**
+     * Get Status of catalogsearch_fulltext index
+     *
+     * @return string
+     */
+    public function getIndexStatus()
+    {
+        if (!($indexStatus = Mage::registry('bubble_search.index_status'))) {
+            $indexStatus = Mage::getSingleton('index/indexer')
+                ->getProcessByCode('catalogsearch_fulltext')
+                ->getStatus();
+            Mage::register('bubble_search.index_status', $indexStatus);
+        }
+        return $indexStatus;
+    }
 
     /**
      * Checks if configured engine is active.
@@ -400,6 +416,7 @@ class Bubble_Search_Helper_Data extends Mage_Core_Helper_Abstract
             $model = Mage::getResourceSingleton($engine);
             return $model
                 && $model instanceof Bubble_Search_Model_Resource_Engine_Abstract
+                && ($this->getIndexStatus() != 'working')
                 && $model->test();
         }
 
