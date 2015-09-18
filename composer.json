@@ -1,0 +1,31 @@
+{
+    "name": "jreinke/magento-elasticsearch",
+    "type": "magento-module",
+    "description": "Elasticsearch module for Magento 1.7+",
+    "authors": [
+        {
+            "name": "Johann Reinke"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/magento-hackathon/magento-composer-installer"
+        }
+    ],
+    "require": {
+        "magento-hackathon/magento-composer-installer":"*"
+    },
+    "extra": {
+        "magento-root-dir": "store",
+        "magento-deploystrategy": "copy",
+        "map": [
+            ["app/code/community/Bubble", "app/code/community/Bubble"],
+            ["lib/Elastica", "lib/Elastica"],
+            ["app/etc/modules/Bubble_Search.xml", "app/etc/modules/Bubble_Search.xml"]
+        ]
+    },
+    "config": {
+        "preferred-install": "dist"
+    }
+}
